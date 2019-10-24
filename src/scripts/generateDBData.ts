@@ -1,6 +1,6 @@
 import * as faker from 'faker'
 import { ParcelEntity } from "../entity/ParcelEntity";
-import { createConnection, createQueryBuilder, getConnection } from "typeorm";
+import { createConnection, getConnection } from "typeorm";
 
 async function seedParcels() {
     await createConnection()

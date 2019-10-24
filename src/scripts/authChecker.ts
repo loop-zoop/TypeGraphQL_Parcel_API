@@ -9,6 +9,8 @@ export const authChecker: AuthChecker<any> = (
       let token = context.req.headers.authorization;
       token = token.slice(7, token.length)
       if(jwt.verify(token, SECRET)) {
+          const data = jwt.decode(token)
+          context.user = data
           return true;
       }
     return false;

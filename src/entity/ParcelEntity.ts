@@ -1,8 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, Index } from "typeorm";
 import { LocationGQL } from "../types/Location";
+import { UserEntity } from "./UserEntity";
+import { ParcelResolver } from "../resolvers/ParcelResolver";
+import { Status } from "../types/statusEnum";
 
 @Entity()
-export class ParcelEntity {
+export class ParcelEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -12,12 +15,16 @@ export class ParcelEntity {
     @Column()
     status: string;
 
-    @Column({
-        type: "point",
+    @Index({ spatial: true })
+    @Column("geometry", {
+        spatialFeatureType: "point",
         srid: 4326
     })
     location: string;
 
     @Column()
     deliveryAddress: string;
+
+    @ManyToOne(type => UserEntity, user => user.parcels)
+    user: UserEntity;
 }

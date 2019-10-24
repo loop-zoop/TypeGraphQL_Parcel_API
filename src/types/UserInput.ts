@@ -1,8 +1,9 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, Int } from "type-graphql";
 import { BaseEntity } from "typeorm";
 
 @InputType()
 export class UserInputGQL extends BaseEntity {
+
     @Field()
     fullName: string;
 

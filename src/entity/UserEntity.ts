@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from "typeorm";
+import { ParcelEntity } from "./ParcelEntity";
 
 @Entity()
 export class UserEntity extends BaseEntity {
@@ -13,6 +14,9 @@ export class UserEntity extends BaseEntity {
 
     @Column()
     password: string;
+
+    @OneToMany(type => ParcelEntity, parcel => parcel.user)
+    parcels: ParcelEntity[];
 
     @Column({nullable: true})
     token: string;
