@@ -1,22 +1,22 @@
 import { ParcelEntity } from "../entity/ParcelEntity";
 import { LocationInputGQL } from "../types/LocationInput";
-import { createQueryBuilder, getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 import { ParcelGQL } from "../types/Parcel";
 
-export async function getFormatedListOfLocationsByRadius(radius : number, location: LocationInputGQL) {
+export async function getFormatedListOfLocationsByRadius(radius: number, location: LocationInputGQL) {
     function toRad(grad: number): number {
         return (grad / 180) * Math.PI
     }
     function toGrad(rad: number): number {
         return (rad / (2 * Math.PI)) * 360
     }
-    
+
     //длинна земного шара в метрах
     const R = 6371 * 1000
-    const dist : number = radius
+    const dist: number = radius
 
-    const longitude : number = location.longitude
-    const latitude : number = location.latitude
+    const longitude: number = location.longitude
+    const latitude: number = location.latitude
 
     const deltaLat = toGrad(dist / R)
     const deltaLon = toGrad(dist / (R * Math.cos(toRad(latitude))))
@@ -33,10 +33,10 @@ export async function getFormatedListOfLocationsByRadius(radius : number, locati
     ))`
 
     const rawParcels = await getRepository(ParcelEntity).createQueryBuilder('parcel')
-    .select(["parcel.id",
-        "parcel.name",
-        "parcel.deliveryAddress",
-        "parcel.status"])
+        .select(["parcel.id",
+            "parcel.name",
+            "parcel.deliveryAddress",
+            "parcel.status"])
         .addSelect(
             `ST_Distance(location, ST_SRID(Point(${longitude},${latitude}),4326),"metre") as distance`,
         )
@@ -48,19 +48,19 @@ export async function getFormatedListOfLocationsByRadius(radius : number, locati
         .orderBy('distance', 'ASC')
         .getRawMany()
 
-    
+
     const formatedResult = []
 
-    
+
     if (!rawParcels) {
         return formatedResult
     } else {
-        for(let i = 0; i < rawParcels.length; i++) {
+        for (let i = 0; i < rawParcels.length; i++) {
             const location = rawParcels[i].location.split(' ');
             const latitude = location[0].slice(6, location[0].length);
-            const longitude = location[1].slice(0, location[1].length-1);
-    
-            let rawParcel : ParcelGQL = {
+            const longitude = location[1].slice(0, location[1].length - 1);
+
+            let rawParcel: ParcelGQL = {
                 id: rawParcels[i].parcel_id,
                 name: rawParcels[i].parcel_name,
                 deliveryAddress: rawParcels[i].parcel_deliveryAddress,
@@ -70,10 +70,10 @@ export async function getFormatedListOfLocationsByRadius(radius : number, locati
                     longitude: longitude
                 }
             }
-    
+
             formatedResult.push(rawParcel)
         }
     }
-    
+
     return formatedResult
 }

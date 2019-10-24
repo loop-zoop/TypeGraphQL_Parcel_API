@@ -13,12 +13,12 @@ export class ParcelResolver {
     @Query(returns => [ParcelGQL])
     async getNearByParcels(
         @Arg('location', location => LocationInputGQL) location: LocationInputGQL,
-        @Arg('radius', radius => Int, {description: 'Provide in meters!'}) radius: number
+        @Arg('radius', radius => Int, { description: 'Provide in meters!' }) radius: number
     ) {
         try {
             const formatedResult = await getFormatedListOfLocationsByRadius(radius, location);
             return formatedResult;
-        } catch(error) {
+        } catch (error) {
             throw new ApolloError(
                 `Something went wrong: ${error}. Make sure to provide radius in meters. Latitudes range from -90 to 90. Longitudes range from -180 to 180.`
             )
@@ -33,16 +33,16 @@ export class ParcelResolver {
     ) {
         const current_user = context.user.data.id
         const rawParcel = await getRepository(ParcelEntity)
-        .createQueryBuilder('parcel')
-        .select("parcel.user")
-        .where('parcel.id = :id', {id: parcelId}).getRawOne()
+            .createQueryBuilder('parcel')
+            .select("parcel.user")
+            .where('parcel.id = :id', { id: parcelId }).getRawOne()
 
         if (rawParcel.userId && rawParcel.userId !== current_user) {
             throw new ApolloError(
                 'Sorry! Parcel is already assigned to another user'
             )
         } else {
-            await createQueryBuilder().update(ParcelEntity).set({status: "assigned", user: current_user}).where('id = :id', {id: parcelId}).execute()
+            await createQueryBuilder().update(ParcelEntity).set({ status: "assigned", user: current_user }).where('id = :id', { id: parcelId }).execute()
         }
 
         console.log(`Parcel with ID ${parcelId} assigned to user with ID ${current_user}`);
@@ -59,9 +59,9 @@ export class ParcelResolver {
     ) {
         const current_user = context.user.data.id
         const rawParcel = await getRepository(ParcelEntity)
-        .createQueryBuilder('parcel')
-        .select(["parcel.user", "parcel.status"])
-        .where('parcel.id = :id', {id: parcelId}).getRawOne()
+            .createQueryBuilder('parcel')
+            .select(["parcel.user", "parcel.status"])
+            .where('parcel.id = :id', { id: parcelId }).getRawOne()
 
         if (rawParcel.parcel_status !== 'assigned') {
             throw new ApolloError(
@@ -72,7 +72,7 @@ export class ParcelResolver {
                 'Sorry! Parcel is assigned to another user'
             )
         } else {
-            await createQueryBuilder().update(ParcelEntity).set({status: "picked_up"}).where('id = :id', {id: parcelId}).execute()
+            await createQueryBuilder().update(ParcelEntity).set({ status: "picked_up" }).where('id = :id', { id: parcelId }).execute()
             console.log(`Parcel with ID ${parcelId} picked up by user with ID ${current_user}`);
         }
 
@@ -87,9 +87,9 @@ export class ParcelResolver {
     ) {
         const current_user = context.user.data.id
         const rawParcel = await getRepository(ParcelEntity)
-        .createQueryBuilder('parcel')
-        .select(["parcel.user", "parcel.status"])
-        .where('parcel.id = :id', {id: parcelId}).getRawOne()
+            .createQueryBuilder('parcel')
+            .select(["parcel.user", "parcel.status"])
+            .where('parcel.id = :id', { id: parcelId }).getRawOne()
 
         if (rawParcel.parcel_status !== 'picked_up') {
             throw new ApolloError(
@@ -100,12 +100,12 @@ export class ParcelResolver {
                 'Sorry! Parcel is assigned to another user'
             )
         } else {
-            await createQueryBuilder().update(ParcelEntity).set({status: "delivered"}).where('id = :id', {id: parcelId}).execute()
+            await createQueryBuilder().update(ParcelEntity).set({ status: "delivered" }).where('id = :id', { id: parcelId }).execute()
         }
 
         console.log(`Parcel with ID ${parcelId} delivered by user with ID ${current_user}`);
 
         return getAndFormatRawParcel(parcelId)
     }
-    
+
 }

@@ -20,9 +20,9 @@ async function seedParcels() {
     }
     if (users.length % amountOfUserRecords === 0) {
         await createQueryBuilder(UserEntity)
-                .insert()
-                .values(users)
-                .execute()
+            .insert()
+            .values(users)
+            .execute()
     }
 
     let parcels = []
@@ -42,7 +42,7 @@ async function seedParcels() {
             precision: 0.00001,
         })
         parcel.location = `( ST_GeomFromText( 'POINT( ${latitude} ${longitude} )', 4326 ) )`;
-        parcels.push(`(DEFAULT, "${parcel.name}", "${parcel.status}", ${parcel.location}, "${parcel.deliveryAddress}")` )
+        parcels.push(`(DEFAULT, "${parcel.name}", "${parcel.status}", ${parcel.location}, "${parcel.deliveryAddress}")`)
 
         const query = `INSERT INTO \`parcel_entity\`(\`id\`, \`name\`, \`status\`, \`location\`, \`deliveryAddress\`) VALUES `
 
@@ -57,11 +57,11 @@ async function seedParcels() {
 }
 
 seedParcels()
-.then(() => {
-    console.log('done')
-    process.exit()
-})
-.catch(err => {
-    console.error(err.message)
-    process.exit()
-})
+    .then(() => {
+        console.log('done')
+        process.exit()
+    })
+    .catch(err => {
+        console.error(err.message)
+        process.exit()
+    })

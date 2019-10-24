@@ -1,6 +1,6 @@
 import "reflect-metadata";
-import {createConnection} from "typeorm";
-import { ApolloServer, gql} from 'apollo-server'
+import { createConnection } from "typeorm";
+import { ApolloServer } from 'apollo-server'
 import { buildSchema } from 'type-graphql'
 import { ParcelResolver } from "./resolvers/ParcelResolver";
 import { UserResolver } from "./resolvers/UserResolver";
@@ -13,8 +13,8 @@ async function startServer() {
         authChecker
     });
     const server = new ApolloServer({
-        schema, 
-        playground: true, 
+        schema,
+        playground: true,
         context: ({ req }) => {
             const context = {
                 req
@@ -28,5 +28,5 @@ async function startServer() {
 };
 
 startServer().catch(e => {
-  console.log(e)
+    console.log(e)
 })

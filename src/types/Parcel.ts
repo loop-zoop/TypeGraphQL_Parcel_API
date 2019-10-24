@@ -23,7 +23,4 @@ export class ParcelGQL {
 
     @Field()
     deliveryAddress: string;
-
-
-
 }

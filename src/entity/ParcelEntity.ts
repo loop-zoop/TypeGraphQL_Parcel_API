@@ -1,8 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, Index } from "typeorm";
-import { LocationGQL } from "../types/Location";
 import { UserEntity } from "./UserEntity";
-import { ParcelResolver } from "../resolvers/ParcelResolver";
-import { Status } from "../types/statusEnum";
 
 @Entity()
 export class ParcelEntity extends BaseEntity {

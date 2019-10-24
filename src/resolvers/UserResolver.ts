@@ -21,7 +21,7 @@ export class UserResolver {
 
         const token = jwt.sign(
             {
-                data: { 
+                data: {
                     id: user.id
                 },
             },
@@ -31,7 +31,7 @@ export class UserResolver {
             }
         )
         user.token = token
-        
+
         return user
     };
 
@@ -52,7 +52,7 @@ export class UserResolver {
 
         const token = jwt.sign(
             {
-                data: { 
+                data: {
                     id: user.id
                 },
             },
