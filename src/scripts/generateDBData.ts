@@ -1,11 +1,32 @@
 import * as faker from 'faker'
+import * as bcrypt from 'bcrypt';
 import { ParcelEntity } from "../entity/ParcelEntity";
-import { createConnection, getConnection } from "typeorm";
+import { createConnection, getConnection, createQueryBuilder } from "typeorm";
+import { UserEntity } from '../entity/UserEntity';
+
+const amountOfParcelRecords = 500;
+const amountOfUserRecords = 50;
 
 async function seedParcels() {
     await createConnection()
+    let users = []
+
+    for (let i = 0; i < amountOfUserRecords; i++) {
+        let user = new UserEntity();
+        user.fullName = faker.name.findName()
+        user.password = bcrypt.hashSync('qwerty', 10)
+        user.email = faker.internet.email()
+        users.push(user)
+    }
+    if (users.length % amountOfUserRecords === 0) {
+        await createQueryBuilder(UserEntity)
+                .insert()
+                .values(users)
+                .execute()
+    }
+
     let parcels = []
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < amountOfParcelRecords; i++) {
         let parcel = new ParcelEntity();
         parcel.name = faker.commerce.productName();
         parcel.status = 'waiting';
@@ -21,12 +42,11 @@ async function seedParcels() {
             precision: 0.00001,
         })
         parcel.location = `( ST_GeomFromText( 'POINT( ${latitude} ${longitude} )', 4326 ) )`;
-        console.log(parcel.location)
         parcels.push(`(DEFAULT, "${parcel.name}", "${parcel.status}", ${parcel.location}, "${parcel.deliveryAddress}")` )
 
         const query = `INSERT INTO \`parcel_entity\`(\`id\`, \`name\`, \`status\`, \`location\`, \`deliveryAddress\`) VALUES `
 
-        if (parcels.length % 15 === 0) {
+        if (parcels.length % amountOfParcelRecords === 0) {
             let finalQuery = `${query} ${parcels.join(',\n')};`;
             await getConnection().query(
                 finalQuery
